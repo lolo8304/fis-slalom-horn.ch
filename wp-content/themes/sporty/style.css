@@ -53,7 +53,7 @@ html {
 	-ms-text-size-adjust: 100%; /* www.456bereastreet.com/archive/201012/controlling_text_size_in_safari_for_ios_without_disabling_user_zoom/ */
 }
 body {
-	background: #666;
+	background: #3476d7;
 }
 article,
 aside,
@@ -576,7 +576,7 @@ a:active {
 	padding: 0;
 	position: relative;
 	max-width: 960px;
-	background-color: #000;
+	background-color: #3476d7;
 	box-shadow: 0 4px 4px rgba(0,0,0,.6); -webkit-box-shadow: 0 4px 4px rgba(0,0,0,.6); -moz-box-shadow: 0 4px 4px rgba(0,0,0,.6); -o-box-shadow: 0 4px 4px rgba(0,0,0,.6);
 	border-top: 8px solid #69C;
 }
@@ -639,7 +639,7 @@ a:active {
 .site-header .site-introduction {
 	float: left;
 	width: 100%;
-	background-color:#000;
+	background-color:#3476d7;
 	padding: 10px 0;
 }
 .site-title {
@@ -666,7 +666,7 @@ a:active {
 	padding-top: 20px;
 	padding-left: 6px;
 	float: left;
-	background-color:#000;
+	background-color:#3476d7;
 }
 
 /* =Menu
@@ -910,14 +910,16 @@ body.archive .page-title {
 .comment-content thead th {
 	border-left: 1px solid #d9d9d9;
 	font-weight: bold;
-	padding: 0.5em 	1.25em;
+	padding: 0;
 }
+/* old padding: 0.5em 	1.25em; */ 
 .entry-content tr td,
 .comment-content tr td {
 	border: 1px solid #d9d9d9;
   	border-width: 1px 0 0 1px;
-	padding: 0.5em 	1.25em;
+	padding: 0;
 }
+/* old padding : 0.5em 	1.25em; */
 .entry-content tr.odd td,
 .comment-content tr.odd td {
 	background: #dfd6c7;
@@ -1234,7 +1236,7 @@ p.nocomments {
 	padding: 1.5em 0;
 	text-align: center;
 	color: #808080;
-	background-color: #202020;
+	background-color: #3476d7;
 	font-family: 'oswaldbook', sans-serif;
 }
 .site-info a{
@@ -1338,7 +1340,7 @@ MEDIA QUERIES
 	
 	.social-media, 
 	#branding img {
-	display: none;
+	display: block;
 	}
 	
 	.site-introduction {
@@ -1394,7 +1396,7 @@ http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
 
 
 .genericon, .genericon:visited {
-	color: #999;
+	color: #e5e5e7;
 	display: inline-block;
 	-webkit-font-smoothing: antialiased;
 	font-size: 18px;
@@ -1421,6 +1423,15 @@ http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
 	*display: inline;
 }
 
+.gener2icon-menu {
+	color: #e5e5e7;
+	-webkit-font-smoothing: antialiased;
+	font-size: 18px;
+	font-size: 1.8rem;
+	font-family: 'Genericons';
+	right: 10px;
+	position: absolute;
+}
 
 /* Social icons */
 .genericon-github:before { content: '\f200'; }
@@ -1434,6 +1445,7 @@ http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
 .genericon-vimeo:before { content: '\f212'; }
 .genericon-youtube:before { content: '\f213'; }
 .genericon-tumblr:before { content: '\f214'; }
+.gener2icon-menu:before { content: '\f419'; }
 
 /* Social Media icons
 ------------------------------------------------------ */
