@@ -622,7 +622,8 @@ a:active {
 	clear: both;
 	margin: 0 auto;
 	max-width: 960px;
-	background-color: #333;
+	background-color: #3476d7;
+	color: #FFF;
 	border-top: 4px solid #666;
 }
 
