@@ -10,8 +10,11 @@
 
  */
 ?>
-
 	<ul class="social-media">
+<div style="width: 20px !important"}>
+<?php echo do_shortcode('[google-translator]'); ?>
+</div>
+
 		<?php if ( get_theme_mod( 'twitter' ) ) : ?>
 			<li><a href="<?php echo esc_url( get_theme_mod( 'twitter' ) ); ?>"  class="genericon genericon-twitter" target="_blank"></a></li>
 		<?php endif; ?>
@@ -57,3 +60,4 @@
 		<?php endif; ?>
 
 	</ul><!-- #social-icons-->
+
