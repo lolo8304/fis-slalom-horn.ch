@@ -35,7 +35,7 @@
 	</div><!-- .entry-content -->
 	<?php endif; ?>
 
-	<footer class="entry-meta">
+	<!--footer class="entry-meta">
 		<?php if ( 'post' == get_post_type() ) : // Hide category and tag text for pages on Search ?>
 			<?php
 				/* translators: used between list items, there is a space after the comma */
@@ -65,5 +65,10 @@
 		<?php endif; ?>
 
 		<?php edit_post_link( __( 'Edit', 'sporty' ), '<span class="sep"> | </span><span class="edit-link">', '</span>' ); ?>
+	</footer--><!-- .entry-meta -->
+	<footer class="entry-meta">
+
+		<?php edit_post_link( __( 'Edit', 'sporty' ), '<span class="edit-link">', '</span>' ); ?>
 	</footer><!-- .entry-meta -->
+
 </article><!-- #post-<?php the_ID(); ?> -->

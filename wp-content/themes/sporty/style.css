@@ -614,6 +614,7 @@ a:active {
     width: 22%;
 	border-radius:0.4em;
 }
+
 #tertiary {
 	clear: right;
 	padding-top: 0;
@@ -904,6 +905,7 @@ body.archive .page-title {
 	margin: 0 -0.083em 2.083em 0;
 	text-align: left;
 	width: 100%;
+	padding: 3px;
 }
 .entry-content tr th,
 .entry-content thead th,
@@ -911,14 +913,14 @@ body.archive .page-title {
 .comment-content thead th {
 	border-left: 1px solid #d9d9d9;
 	font-weight: bold;
-	padding: 0;
+	padding: 3px;
 }
 /* old padding: 0.5em 	1.25em; */ 
 .entry-content tr td,
 .comment-content tr td {
 	border: 1px solid #d9d9d9;
   	border-width: 1px 0 0 1px;
-	padding: 0;
+	padding: 3px;
 }
 /* old padding : 0.5em 	1.25em; */
 .entry-content tr.odd td,
@@ -1265,6 +1267,17 @@ p.nocomments {
 	width: auto; /* Prevent stretching of full-size images with height and width attributes in IE8 */
 }
 
+
+	.sam-block-line {
+		max-width:100%;
+		width: auto;
+	}
+	.sam-block-item {
+		width: auto;
+		max-width: 28%
+	}
+
+
 /************************************************************************************
 MEDIA QUERIES
 *************************************************************************************/
@@ -1285,10 +1298,22 @@ MEDIA QUERIES
 		margin: 0;
 		padding: 0;
 	}
-	#primary,
-	#secondary,
-	#tertiary {
+	#primary {
 		width: 100%;
+	}
+	#secondary {
+		float: right;
+    		margin-left: calc(100% - 210px);
+    		width: 210px;
+    		margin-bottom: -100%;
+    		margin-top: -8px;
+    		z-index: 0;
+	
+	}
+	#tertiary {
+		width: calc(98% - 210px);
+		float: initial;
+    		position: relative;
 	}
 	.site-header site-introduction,
 	#main {
@@ -1296,11 +1321,19 @@ MEDIA QUERIES
 	}
 	.main-navigation {
 	
-	padding-top: 0;
-}
-#primary {
-	border-top: 0;
-}
+		padding-top: 0;
+	}
+	#primary {
+		border-top: 0;
+	}
+	.sam-block-line {
+		max-width:100%;
+		width: auto;
+	}
+	.sam-block-item {
+		width: auto;
+		max-width: 40%
+	}
 
 }
 
@@ -1312,6 +1345,26 @@ MEDIA QUERIES
 		float: none;
 		padding: 0;
 		width: 100%;
+	}
+	#primary,
+	#secondary, 
+	#tertiary {
+		background: none;
+		float: none;
+		margin: 0;
+		padding: 0;
+		width: 100%;
+	}
+	#secondary {
+		width: 210px;
+	}
+	.sam-block-line {
+		max-width:100%;
+		width: auto;
+	}
+	.sam-block-item {
+		width: auto;
+		max-width: 40%
 	}
 }
 
@@ -1682,6 +1735,8 @@ http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
 	.featuretext_top h3{
 	font-size:1.2rem;
 	font-size:12px;
+	
+
 }
 }
 	

@@ -28,7 +28,7 @@
 	</div><!-- .entry-content -->
 
 	<footer class="entry-meta">
-		<?php
+		<!--?php
 			/* translators: used between list items, there is a space after the comma */
 			$category_list = get_the_category_list( __( ', ', 'sporty' ) );
 
@@ -60,7 +60,7 @@
 				get_permalink(),
 				the_title_attribute( 'echo=0' )
 			);
-		?>
+		?-->
 
 		<?php edit_post_link( __( 'Edit', 'sporty' ), '<span class="edit-link">', '</span>' ); ?>
 	</footer><!-- .entry-meta -->
