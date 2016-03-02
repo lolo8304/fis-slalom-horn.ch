@@ -6,3 +6,10 @@ Version: 2.12
 
 This stylesheet is provided to allow users the ability of overriding the default styles for all display types
 */
+
+#TB_caption {
+    height: 25px;
+    padding: 1px 30px 1px 25px !important;
+    float: left;
+    font-size: 0.8em;
+}

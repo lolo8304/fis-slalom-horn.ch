@@ -14,13 +14,13 @@
 <div style="width: 20px !important"}>
 <?php echo do_shortcode('[google-translator]'); ?>
 </div>
-
+<li><a style="font-size:1em;width:34px;" href="http://fis-slalom-horn.ch/live/" class="genericon">Live</a></li>
 		<?php if ( get_theme_mod( 'twitter' ) ) : ?>
 			<li><a href="<?php echo esc_url( get_theme_mod( 'twitter' ) ); ?>"  class="genericon genericon-twitter" target="_blank"></a></li>
 		<?php endif; ?>
 		
 		<?php if ( get_theme_mod( 'facebook' ) ) : ?>
-			<li><a href="<?php echo esc_url( get_theme_mod( 'facebook' ) ); ?>" class="genericon genericon-facebook-alt" target="_blank"></a></li>
+			<li><a style="font-size:1em" href="<?php echo esc_url( get_theme_mod( 'facebook' ) ); ?>" class="genericon genericon-facebook-alt" target="_blank"></a></li>
 		<?php endif; ?>
 		
 		<?php if ( get_theme_mod( 'pinterest' ) ) : ?>
@@ -60,4 +60,3 @@
 		<?php endif; ?>
 
 	</ul><!-- #social-icons-->
-
