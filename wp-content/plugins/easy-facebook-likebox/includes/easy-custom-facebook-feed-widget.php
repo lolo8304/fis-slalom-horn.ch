@@ -22,13 +22,14 @@ class Easy_Custom_Facebook_Feed_Widget extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	public function widget( $args, $instance ) {
+		global $efbl;
 		$title = apply_filters( 'widget_title', $instance['title'] );
  
 		echo $args['before_widget'];
 		if ( ! empty( $title ) )
 			echo $args['before_title'] . $title . $args['after_title'];
 			
-		echo Easy_Facebook_Likebox::render_fbfeed_box($instance);
+		echo $efbl->render_fbfeed_box($instance);
 		 
 		echo $args['after_widget'];
 	}
@@ -167,8 +168,8 @@ class Easy_Custom_Facebook_Feed_Widget extends WP_Widget {
 		<label for="<?php echo $this->get_field_id( 'layout' ); ?>"><?php _e( 'Posts Layout:', 'easy-facebook-likebox' ); ?></label> 
 		<select id="<?php echo $this->get_field_id( 'layout' ); ?>" name="<?php echo $this->get_field_name( 'layout' ); ?>">
         	 	<option <?php selected( $layout, 'thumbnail' , $echo = true); ?> value="thumbnail" ><?php _e( 'Thumbnail', 'easy-facebook-likebox' ); ?></option>
-                <option <?php selected( $layout, 'halfwidth', $echo = true); ?> value="half" ><?php _e( 'Half Width', 'easy-facebook-likebox' ); ?></option>
-                <option <?php selected( $layout, 'fullwidth', $echo = true); ?> value="fullwidth"><?php _e( 'Full Width', 'easy-facebook-likebox' ); ?></option>
+                <option <?php selected( $layout, 'half', $echo = true); ?> value="half" ><?php _e( 'Half Width', 'easy-facebook-likebox' ); ?></option>
+                <option <?php selected( $layout, 'full', $echo = true); ?> value="full"><?php _e( 'Full Width', 'easy-facebook-likebox' ); ?></option>
         </select><br />
  		</p>
         
@@ -242,11 +243,11 @@ class Easy_Custom_Facebook_Feed_Widget extends WP_Widget {
          <i><?php _e( 'Plugin will store the posts in database temporarily and will look for new posts after every selected time duration', 'easy-facebook-likebox' ); ?></i>    
 		</p>
        
-        <p><?php _e( 'Use Below generated shortcode to use in pages or posts', 'easy-facebook-likebox' ); ?></p>
-        <?php 
+		<p><?php _e( 'Use below shortcode to display like box inside pages, posts or in any shortcode aware textarea/editor', 'easy-facebook-likebox' ); ?></p>        
+		<?php 
   		
-		$fb_url = parse_url( $fanpage_url );
-		$fanpage_url = str_replace('/', '', $fb_url['path']);
+		$fanpage_url = efbl_parse_url(  $fanpage_url );
+
 		/*echo "<pre>";
 		print_r( $fb_url  );
   		echo "</pre>";*/

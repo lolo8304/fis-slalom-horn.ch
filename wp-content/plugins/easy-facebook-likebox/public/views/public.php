@@ -48,7 +48,7 @@ jQuery(document).ready(function($) {
           type: 'inline',
           preloader: false,
 		  
-		  <?php if($options['efbl_do_not_show_again'] == 1){?>
+		  <?php if(isset($options['efbl_do_not_show_again']) and $options['efbl_do_not_show_again'] == 1){?>
 		  callbacks: {
 			  close: function() {
  				  $.cookie('dont_show', '1' ,{ expires: 7, path: '/' } );	

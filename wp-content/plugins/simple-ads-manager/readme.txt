@@ -2,9 +2,9 @@
 Contributors: minimus
 Donate link: http://www.simplelib.com/archives/wordpress-plugin-simple-ads-manager/
 Tags: ad, ads, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, wptouch
-Requires at least: 3.9
-Tested up to: 4.3
-Stable tag: 2.9.6.121
+Requires at least: 4.1
+Tested up to: 4.5
+Stable tag: 2.9.8.125
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,7 +14,7 @@ Advertisement rotation system with a flexible logic of displaying advertisements
 
 Simple Ads Manager is easy to use plugin providing a flexible logic of displaying advertisements.
 
-[![endorse](https://api.coderwall.com/minimus/endorsecount.png)](https://coderwall.com/minimus)
+> __Note__: Now this plugin is partially deprecated. If your site works under PHP 5.3 or later version (include PHP 7.0) it is better to use [__SAM Pro (Free Edition)__](https://wordpress.org/plugins/sam-pro-free/).
 
 = Features =
 * Flexible logic of advertisements rotation based on defined weight of each advertisement in group (Ads Place)
@@ -89,6 +89,13 @@ No questions now...
 
 == Changelog ==
 
+= 2.9.8.125 =
+* Avoiding the use of deprecated functions `add_object_page` and `get_currentuserinfo`.
+= 2.9.8.124 =
+* Wordpress 4.5 compatibility
+= 2.9.7.123 =
+* Wordpress 4.4 compatibility tested
+* Some minor bugs resolved
 = 2.9.6.121 =
 * The problem of arbitrary automatic insertion of ads on the main page is solved.
 * According to numerous requests from users the modern control element "Slider" of the option "Access Level" was changed to the classical control element "Radio Button".
@@ -251,6 +258,12 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 2.9.8.125 =
+* Avoiding the use of deprecated functions.
+= 2.9.8.124 =
+Wordpress 4.5 compatibility.
+= 2.9.7.123 =
+Wordpress 4.4 compatibility tested. Some minor bugs resolved.
 = 2.9.6.121 =
 Minor errors are eliminated. Italian language was added into the language pack.
 = 2.9.5.118 =

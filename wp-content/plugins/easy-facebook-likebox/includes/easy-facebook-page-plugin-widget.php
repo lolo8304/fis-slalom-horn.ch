@@ -22,13 +22,14 @@ class Easy_Facebook_Page_Plugin_Widget extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	public function widget( $args, $instance ) {
+		global $efbl;
 		$title = apply_filters( 'widget_title', $instance['title'] );
  
 		echo $args['before_widget'];
 		if ( ! empty( $title ) )
 			echo $args['before_title'] . $title . $args['after_title'];
 			
-		echo Easy_Facebook_Likebox::render_fb_page_plugin($instance);
+		echo $efbl->render_fb_page_plugin($instance);
 		 
 		echo $args['after_widget'];
 	}
@@ -221,7 +222,7 @@ class Easy_Facebook_Page_Plugin_Widget extends WP_Widget {
 		</p>
         <p class="widget-half">
         <input type="checkbox" class="widefat" id="<?php echo $this->get_field_id( 'small_header' ); ?>" name="<?php echo $this->get_field_name( 'small_header' ); ?>" value="1" <?php checked( $small_header, 1 ); ?>>
-			<label for="<?php echo $this->get_field_id( 'small_header' ); ?>"><?php _e( 'User small header', 'easy-facebook-likebox' ); ?></label>
+			<label for="<?php echo $this->get_field_id( 'small_header' ); ?>"><?php _e( 'Use small header', 'easy-facebook-likebox' ); ?></label>
 			
 		</p>
         
@@ -229,7 +230,7 @@ class Easy_Facebook_Page_Plugin_Widget extends WP_Widget {
         
          <div class="clearfix"></div>
         
-        <p><?php _e( 'Use Below shortcode to use inside pages or posts', 'easy-facebook-likebox' ); ?></p>
+        <p><?php _e( 'Use below shortcode to display like box inside pages, posts or in any shortcode aware textarea/editor', 'easy-facebook-likebox' ); ?></p>
         <?php 
 		if( empty($show_stream) ){
 			$show_stream = 0;
@@ -255,8 +256,8 @@ class Easy_Facebook_Page_Plugin_Widget extends WP_Widget {
 			$fb_appid = 'fb_appid="'.$fb_appid.'"';
 		}
 		
-		$fb_url = parse_url( $fanpage_url );
-		$fanpage_url = str_replace('/', '', $fb_url['path']);
+	 
+		$fanpage_url = efbl_parse_url(  $fanpage_url );
 		/*echo "<pre>";
 		print_r( $fb_url  );
   		echo "</pre>";*/

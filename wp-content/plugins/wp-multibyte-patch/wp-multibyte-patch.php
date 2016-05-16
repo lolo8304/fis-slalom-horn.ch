@@ -2,7 +2,7 @@
 /*
 Plugin Name: WP Multibyte Patch
 Description: Multibyte functionality enhancement for the WordPress Japanese package.
-Version: 2.4
+Version: 2.6
 Plugin URI: http://eastcoder.com/code/wp-multibyte-patch/
 Author: Seisuke Kuraishi
 Author URI: http://tinybit.co.jp/
@@ -15,9 +15,9 @@ Domain Path: /languages
  * Multibyte functionality enhancement for the WordPress Japanese package.
  *
  * @package WP_Multibyte_Patch
- * @version 2.4
+ * @version 2.6
  * @author Seisuke Kuraishi <210pura@gmail.com>
- * @copyright Copyright (c) 2015 Seisuke Kuraishi, Tinybit Inc.
+ * @copyright Copyright (c) 2016 Seisuke Kuraishi, Tinybit Inc.
  * @license http://opensource.org/licenses/gpl-2.0.php GPLv2
  * @link http://eastcoder.com/code/wp-multibyte-patch/
  */
@@ -43,12 +43,12 @@ class multibyte_patch {
 		'patch_process_search_terms' => false,
 		'patch_admin_custom_css' => false,
 		'patch_wplink_js' => true,
-		'patch_word_count_js' => true,
 		'patch_force_character_count' => false,
 		'patch_force_twentytwelve_open_sans_off' => false,
 		'patch_force_twentythirteen_google_fonts_off' => false,
 		'patch_force_twentyfourteen_google_fonts_off' => false,
 		'patch_force_twentyfifteen_google_fonts_off' => false,
+		'patch_force_twentysixteen_google_fonts_off' => false,
 		'patch_sanitize_file_name' => true,
 		'patch_bp_create_excerpt' => false,
 		'bp_excerpt_mblength' => 110,
@@ -62,7 +62,7 @@ class multibyte_patch {
 	var $debug_suffix = '';
 	var $textdomain = 'wp-multibyte-patch';
 	var $lang_dir = 'languages';
-	var $required_version = '4.2-RC1';
+	var $required_version = '4.4-RC1';
 	var $query_based_vars = array();
 
 	// For fallback purpose only. (1.6)
@@ -126,10 +126,10 @@ class multibyte_patch {
 		return $commentdata;
 	}
 
-	function pre_remote_source( $linea, $pagelinkedto ) {
-		$this->pingback_ping_linea = $linea;
+	function pre_remote_source( $remote_source, $pagelinkedto ) {
+		$this->pingback_ping_remote_source = $remote_source;
 		$this->pingback_ping_pagelinkedto = $pagelinkedto;
-		return $linea;
+		return $remote_source;
 	}
 
 	function incoming_pingback( $commentdata ) {
@@ -140,23 +140,23 @@ class multibyte_patch {
 			return $commentdata;
 
 		$pagelinkedto = $this->pingback_ping_pagelinkedto;
-		$linea = $this->pingback_ping_linea;
+		$remote_source = $this->pingback_ping_remote_source;
 
-		$linea = preg_replace( "/" . preg_quote( '<!DOC', '/' ) . "/i", '<DOC', $linea );
-		$linea = preg_replace( "/[\r\n\t ]+/", ' ', $linea );
-		$linea = preg_replace( "/<\/*(h1|h2|h3|h4|h5|h6|p|th|td|li|dt|dd|pre|caption|input|textarea|button|body)[^>]*>/i", "\n\n", $linea );
+		$remote_source = preg_replace( "/" . preg_quote( '<!DOC', '/' ) . "/i", '<DOC', $remote_source );
+		$remote_source = preg_replace( "/[\r\n\t ]+/", ' ', $remote_source );
+		$remote_source = preg_replace( "/<\/*(h1|h2|h3|h4|h5|h6|p|th|td|li|dt|dd|pre|caption|input|textarea|button|body)[^>]*>/i", "\n\n", $remote_source );
 
-		preg_match( '|<title>([^<]*?)</title>|is', $linea, $matchtitle );
+		preg_match( '|<title>([^<]*?)</title>|is', $remote_source, $matchtitle );
 		$title = $matchtitle[1];
 
-		preg_match( "/<meta[^<>]+charset=\"*([a-zA-Z0-9\-_]+)\"*[^<>]*>/i", $linea, $matches );
+		preg_match( "/<meta[^<>]+charset=\"*([a-zA-Z0-9\-_]+)\"*[^<>]*>/i", $remote_source, $matches );
 		$charset = isset( $matches[1] ) ? $matches[1] : '';
-		$from_encoding = $this->guess_encoding( strip_tags( $linea ), $charset );
+		$from_encoding = $this->guess_encoding( strip_tags( $remote_source ), $charset );
 		$blog_encoding = $this->blog_encoding;
 
-		$linea = strip_tags( $linea, '<a>' );
-		$linea = $this->convenc( $linea, $blog_encoding, $from_encoding );
-		$p = explode( "\n\n", $linea );
+		$remote_source = strip_tags( $remote_source, '<a>' );
+		$remote_source = $this->convenc( $remote_source, $blog_encoding, $from_encoding );
+		$p = explode( "\n\n", $remote_source );
 
 		foreach ( $p as $para ) {
 			if ( strpos( $para, $pagelinkedto ) !== false && preg_match( "/^([^<>]*)(\<a[^<>]+[\"']" . preg_quote( $pagelinkedto, '/' ) . "[\"'][^<>]*\>)([^<>]+)(\<\/a\>)(.*)$/i", $para, $context ) )
@@ -234,11 +234,9 @@ class multibyte_patch {
 		return preg_replace( "/<a [^<>]+>([^<>]+)<\/a>(" . preg_quote( $this->conf['bp_excerpt_more'], '/' ) . "<\/p>)$/", "$1$2", $content );
 	}
 
-	// $excerpt param could already be truncated to 20 words or less by the original get_comment_excerpt() function.
-	// $comment param (introduced in WP 4.1) should be used instead.
-	function get_comment_excerpt( $excerpt = '' ) {
-		$excerpt = preg_replace( "/\.\.\.$/", '', $excerpt );
+	function get_comment_excerpt( $excerpt = '', $comment_ID = 0, $comment = '' ) {
 		$blog_encoding = $this->blog_encoding;
+		$excerpt = strip_tags( str_replace( array( "\n", "\r" ), ' ', $comment->comment_content ) );
 
 		if ( $this->mb_strlen( $excerpt, $blog_encoding ) > $this->conf['comment_excerpt_mblength'] )
 			$excerpt = mb_substr( $excerpt, 0, $this->conf['comment_excerpt_mblength'], $blog_encoding ) . '&hellip;';
@@ -272,21 +270,12 @@ class multibyte_patch {
 	}
 
 	function wplink_js( &$scripts ) {
-		$script_required_version = '4.3-RC3';
+		$script_required_version = '4.5-RC2';
 
 		if ( !$this->is_wp_required_version( $script_required_version ) )
-			$scripts->add( 'wplink', plugin_dir_url( __FILE__ ) . "js/20150424/wplink{$this->debug_suffix}.js", array( 'jquery' ), '20150424', 1 );
+			$scripts->add( 'wplink', plugin_dir_url( __FILE__ ) . "js/20151207/wplink{$this->debug_suffix}.js", array( 'jquery' ), '20151207', 1 );
 		else
-			$scripts->add( 'wplink', plugin_dir_url( __FILE__ ) . "js/wplink{$this->debug_suffix}.js", array( 'jquery' ), '20150818', 1 );
-	}
-
-	function word_count_js( &$scripts ) {
-		$script_required_version = '4.3-RC1';
-
-		if ( !$this->is_wp_required_version( $script_required_version ) )
-			$scripts->add( 'word-count', plugin_dir_url( __FILE__ ) . "js/20131219/word-count{$this->debug_suffix}.js", array( 'jquery' ), 20131219, 1 );
-		//else
-		//	$scripts->add( 'word-count', plugin_dir_url( __FILE__ ) . "js/word-count{$this->debug_suffix}.js", array(), '20150818', 1 );
+			$scripts->add( 'wplink', plugin_dir_url( __FILE__ ) . "js/wplink{$this->debug_suffix}.js", array( 'jquery', 'wp-a11y' ), '20160411', 1 );
 	}
 
 	function force_character_count( $translations = '', $text = '', $context = '' ) {
@@ -312,15 +301,22 @@ class multibyte_patch {
 	}
 
 	function force_twentyfifteen_google_fonts_off() {
-		global $wp_styles;
-
 		wp_dequeue_style( 'twentyfifteen-fonts' );
+	}
 
-		$styles = $wp_styles->query( 'twentyfifteen-style' );
+	function force_twentysixteen_google_fonts_off() {
+		wp_dequeue_style( 'twentysixteen-fonts' );
+	}
 
-		if ( !empty( $styles->deps ) && is_array( $styles->deps ) ) {
-			if ( false !== $key = array_search( 'twentyfifteen-fonts', $styles->deps ) )
-				unset( $styles->deps[$key] );
+	function remove_editor_style( $file = '' ) {
+		global $editor_styles;
+
+		if ( ! is_admin() || empty( $editor_styles ) || ! is_array( $editor_styles ) )
+			return;
+
+		foreach ( $editor_styles as $key => $value ) {
+			if( $file === $value )
+				unset( $editor_styles[$key] );
 		}
 	}
 
@@ -352,10 +348,7 @@ class multibyte_patch {
 	function filters_after_setup_theme() {
 		// add filter
 		if ( false !== $this->conf['patch_force_character_count']) {
-			if (
-				$this->is_wp_required_version( '4.3-RC1' ) && 'characters_including_spaces' != _x( 'words', 'Word count type. Do not translate!' ) || 
-				!$this->is_wp_required_version( '4.3-RC1' ) && 'characters' != _x( 'words', 'word count: words or characters?' )
-			)
+			if ( 'characters_including_spaces' != _x( 'words', 'Word count type. Do not translate!' ) )
 			add_filter( 'gettext_with_context', array( $this, 'force_character_count' ), 10, 3 );
 		}
 
@@ -376,6 +369,16 @@ class multibyte_patch {
 
 		if ( false !== $this->conf['patch_force_twentyfifteen_google_fonts_off'] && 'twentyfifteen' == get_template() ) {
 			add_action( 'wp_enqueue_scripts', array( $this, 'force_twentyfifteen_google_fonts_off' ), 99 );
+
+			if ( function_exists( 'twentyfifteen_fonts_url' ) )
+				$this->remove_editor_style( twentyfifteen_fonts_url() );
+		}
+
+		if ( false !== $this->conf['patch_force_twentysixteen_google_fonts_off'] && 'twentysixteen' == get_template() ) {
+			add_action( 'wp_enqueue_scripts', array( $this, 'force_twentysixteen_google_fonts_off' ), 99 );
+
+			if ( function_exists( 'twentysixteen_fonts_url' ) )
+				$this->remove_editor_style( twentysixteen_fonts_url() );
 		}
 	}
 
@@ -392,7 +395,7 @@ class multibyte_patch {
 		}
 
 		if ( false !== $this->conf['patch_get_comment_excerpt'] )
-			add_filter( 'get_comment_excerpt', array( $this, 'get_comment_excerpt' ) );
+			add_filter( 'get_comment_excerpt', array( $this, 'get_comment_excerpt' ), 10, 3 );
 
 		if ( false !== $this->conf['patch_sanitize_file_name'] )
 			add_filter( 'sanitize_file_name', array( $this, 'sanitize_file_name' ) );
@@ -421,9 +424,6 @@ class multibyte_patch {
 
 		if ( false !== $this->conf['patch_wplink_js'] )
 			add_action( 'wp_default_scripts', array( $this, 'wplink_js' ), 9 );
-
-		if ( false !== $this->conf['patch_word_count_js'] )
-			add_action( 'wp_default_scripts', array( $this, 'word_count_js' ), 9 );
 
 		add_action( 'after_setup_theme', array( $this, 'filters_after_setup_theme' ), 99 );
 	}

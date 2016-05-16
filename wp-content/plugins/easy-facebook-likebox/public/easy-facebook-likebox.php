@@ -2,10 +2,10 @@
 /**
  * Plugin Name.
  *
- * @package   Plugin_Name
- * @author    Your Name <email@example.com> 
+ * @package   EasyFacebookLikeBox
+ * @author    Sajid Javed <sjaved_87@yahoo.compact> 
  * @license   GPL-2.0+
- * @link      http://example.com
+ * @link      http://jwesolb.com
  * @copyright 2014 Your Name or Company Name
  */
 
@@ -18,12 +18,12 @@
  *
  * @TODO: Rename this class to a proper name for your plugin.
  *
- * @package Plugin_Name
- * @author  Your Name <email@example.com>
+ * @package EasyFacebookLikeBox
+ * @author  Sajid Javed <sjaved_87@yahoo.compact>
  */
 // Include and instantiate the class.
 require_once 'includes/Mobile_Detect.php';
-$mDetect = new Mobile_Detect;
+$mDetect = new EFBL_Mobile_Detect;
 
 class Easy_Facebook_Likebox {
 
@@ -34,7 +34,7 @@ class Easy_Facebook_Likebox {
 	 *
 	 * @var     string
 	 */
-	const VERSION = '4.2';
+	const VERSION = '4.2.5';
 
 	/**
 	 * @TODO - Rename "plugin-name" to the name your your plugin
@@ -67,7 +67,7 @@ class Easy_Facebook_Likebox {
 	 *
 	 * @since     1.1.0
 	 */
-	private function __construct() {
+	public function __construct() {
 
 		// Load plugin text domain
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
@@ -302,60 +302,7 @@ class Easy_Facebook_Likebox {
 	
 	public function efb_feed_shortcode($atts, $content=""){
 		return $this->render_fbfeed_box($atts);
-	}
-	
-	/**
-	 * 		  This fucntion will render the facebook like box
-	 *        before saving it or sending it to the browser.
-	 *
-	 *        Filters: http://codex.wordpress.org/Plugin_API#Filters
-	 *        Reference:  http://codex.wordpress.org/Plugin_API/Filter_Reference
-	 *
-	 * @since    1.1.0
-	 */
-	public function render_fb_box($options) {
-		
-		extract($options, EXTR_SKIP);
-		
-		if( empty( $fb_appid ) ){
-			$fb_appid = '395202813876688';
-		}
-		
-		if( empty( $locale ) ){
-			$locale = 'en_US';
-		}
- 		
-		if( !empty( $locale_other ) ){
-			$locale = $locale_other;
-		}
-		
- 		$pieces = explode('/', $fanpage_url); // divides the string in pieces where '/' is found
-		$page_name_id = end($pieces); //takes the last piece
- 
- 		$show_stream = ( $show_stream == 1 ) ? 'data-stream=true' : 'data-stream=false'; 
-		$show_faces = ( $show_faces == 1 ) ? 'data-show-faces=true' : 'data-show-faces=false'; 
-		$show_border = ( $show_border == 1 ) ? 'data-show-border=true' : 'data-show-border=false' ;
-		$show_header = ( $show_header == 1 ) ? 'data-header=true' : 'data-header=false';
-		$responsive = ( $responsive == 1 ) ? 'responsive' : '';
- 		 
-		$returner = '<div id="fb-root"></div>
-					<script>(function(d, s, id) {
-					  var js, fjs = d.getElementsByTagName(s)[0];
-					  if (d.getElementById(id)) return;
-					  js = d.createElement(s); js.id = id;
-					  js.src = "//connect.facebook.net/'.$locale.'/all.js#xfbml=1&appId='.$fb_appid.'";
-					  fjs.parentNode.insertBefore(js, fjs);
-					}(document, \'script\', \'facebook-jssdk\'));</script>';
-					
-		$returner .= '<div class="fb-like-box '.$responsive.' " data-href="https://www.facebook.com/'.$page_name_id.'" data-colorscheme="'.$colorscheme.'" data-width="'.$box_width.'" data-height="'.$box_height.'" '.$show_faces.' '.$show_header.' '.$show_stream.' '.$show_border.'></div>';
-		
-		/*echo '<pre>';
-		echo htmlspecialchars($returner);
-		echo '</pre>';*/
-		
- 		return $returner;
-		 
-	}
+	}	
 	
 	public function render_fbfeed_box($atts) {
 		$defaults = '';
@@ -399,8 +346,7 @@ class Easy_Facebook_Likebox {
 			$locale = $locale_other;
 		}
 		
- 		$pieces = explode('/', $fanpage_url); // divides the string in pieces where '/' is found
-		$page_name_id = end($pieces); //takes the last piece
+ 		$page_name_id = efbl_parse_url(  $fanpage_url );
  
  		$show_stream = ( $show_stream == 1 ) ? 'data-show-posts=true' : 'data-show-posts=false'; 
 		$show_faces = ( $show_faces == 1 ) ? 'data-show-facepile=true' : 'data-show-facepile=false'; 
@@ -484,3 +430,4 @@ class Easy_Facebook_Likebox {
 	 
 
 }
+$efbl = new Easy_Facebook_Likebox();

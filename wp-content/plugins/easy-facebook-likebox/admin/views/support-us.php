@@ -25,3 +25,9 @@
   js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=517129121754984&version=v2.0";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
+
+<h1> Follow me at twitter</h1>
+<a href="https://twitter.com/SajidJavaid" class="twitter-follow-button" data-show-count="false">Follow @SajidJavaid</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?"http":"https";if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document, "script", "twitter-wjs");</script>
+
+I would really appreciate if you could spare 30 to <a href="https://apps.facebook.com/my-polls/form/what-feature-you-use-mostly-in-plugin?from=admin_wall" target="_blank">answer a simple question</a>. 

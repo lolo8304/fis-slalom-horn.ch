@@ -2,7 +2,7 @@
 /*
 Plugin Name: Google Language Translator
 Plugin URI: http://www.studio88design.com/plugins/google-language-translator
-Version: 5.0.05
+Version: 5.0.09
 Description: The MOST SIMPLE Google Translator plugin.  This plugin adds Google Translator to your website by using a single shortcode, [google-translator]. Settings include: layout style, hide/show specific languages, hide/show Google toolbar, and hide/show Google branding. Add the shortcode to pages, posts, and widgets.
 Author: Rob Myrick
 Author URI: http://www.wp-studio.net/
@@ -147,7 +147,9 @@ class google_language_translator {
     add_option('googlelanguagetranslator_floating_widget','yes');
     add_option('googlelanguagetranslator_flag_size','18');
     add_option('googlelanguagetranslator_flags_order','');
-    add_option('googlelanguagetranslator_english_flag_choice_cb','');
+    add_option('googlelanguagetranslator_english_flag_choice','');
+    add_option('googlelanguagetranslator_spanish_flag_choice','');
+    add_option('googlelanguagetranslator_portuguese_flag_choice','');
     delete_option('googlelanguagetranslator_manage_translations',0);
   } 
   
@@ -170,6 +172,9 @@ class google_language_translator {
     delete_option('googlelanguagetranslator_floating_widget','yes');
     delete_option('googlelanguagetranslator_flag_size','18');
     delete_option('googlelanguagetranslator_flags_order','');
+    delete_option('googlelanguagetranslator_english_flag_choice','');
+    delete_option('googlelanguagetranslator_spanish_flag_choice','');
+    delete_option('googlelanguagetranslator_portuguese_flag_choice','');
   }
   
   public function glt_settings_link ( $links ) {
@@ -230,7 +235,7 @@ class google_language_translator {
 
   public function google_translator_shortcode() {
 	
-    if (get_option('googlelanguagetranslator_display')=='Vertical'){
+    if (get_option('googlelanguagetranslator_display')=='Vertical' || get_option('googlelanguagetranslator_display')=='SIMPLE'){
         return $this->googlelanguagetranslator_vertical();
     }
     elseif(get_option('googlelanguagetranslator_display')=='Horizontal'){
@@ -317,7 +322,6 @@ class google_language_translator {
     $floating_widget = get_option ('googlelanguagetranslator_floating_widget');
     $is_active = get_option ( 'googlelanguagetranslator_active' );
     $is_multilanguage = get_option('googlelanguagetranslator_multilanguage');
-    $auto_display = ', autoDisplay: false';
     $str = ''; ?>
     <script>jQuery(document).ready(function(a){a("a.nturl").on("click",function(){function l(){doGoogleLanguageTranslator(default_lang+"|"+default_lang)}function n(){doGoogleLanguageTranslator(default_lang+"|"+lang_prefix)}default_lang="<?php echo get_option('googlelanguagetranslator_language'); ?>",lang_prefix=a(this).attr("class").split(" ")[2],lang_prefix==default_lang?l():n()}),a("a.flag").on("click",function(){function l(){doGoogleLanguageTranslator(default_lang+"|"+default_lang)}function n(){doGoogleLanguageTranslator(default_lang+"|"+lang_prefix)}default_lang="<?php echo get_option('googlelanguagetranslator_language'); ?>",lang_prefix=a(this).attr("class").split(" ")[2],a(".tool-container").hide(),lang_prefix==default_lang?l():n()}),0==a("body > #google_language_translator").length&&a("#glt-footer").html("<div id='google_language_translator'></div>")});</script>
 
@@ -401,17 +405,18 @@ class google_language_translator {
     $layout = get_option('googlelanguagetranslator_display');
     $is_multilanguage = get_option('googlelanguagetranslator_multilanguage');
     $horizontal_layout = ', layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL';
+	$simple_layout = ', layout: google.translate.TranslateElement.InlineLayout.SIMPLE';
     $auto_display = ', autoDisplay: false';
     $default_language = get_option('googlelanguagetranslator_language');
 
         if ($is_multilanguage == 1) {
           $multilanguagePage = ', multilanguagePage:true';
-		  $str.="<div id='glt-footer'></div><script type='text/javascript'>function GoogleLanguageTranslatorInit() { new google.translate.TranslateElement({pageLanguage: '".$default_language."'".$language_choices . ($layout=='Horizontal' ? $horizontal_layout : '') .  $auto_display . $multilanguagePage . $this->analytics()."}, 'google_language_translator');}</script>";
+		  $str.="<div id='glt-footer'></div><script type='text/javascript'>function GoogleLanguageTranslatorInit() { new google.translate.TranslateElement({pageLanguage: '".$default_language."'".$language_choices . ($layout=='Horizontal' ? $horizontal_layout : ($layout=='SIMPLE' ? $simple_layout : '')) . $auto_display . $multilanguagePage . $this->analytics()."}, 'google_language_translator');}</script>";
           $str.="<script type='text/javascript' src='//translate.google.com/translate_a/element.js?cb=GoogleLanguageTranslatorInit'></script>";
         echo $str;
 
 	} elseif ($is_multilanguage == 0) {		  
-		  $str.="<div id='glt-footer'></div><script type='text/javascript'>function GoogleLanguageTranslatorInit() { new google.translate.TranslateElement({pageLanguage: '".$default_language."'".$language_choices . ($layout=='Horizontal' ? $horizontal_layout : '') . $auto_display . $this->analytics()."}, 'google_language_translator');}</script>";
+		  $str.="<div id='glt-footer'></div><script type='text/javascript'>function GoogleLanguageTranslatorInit() { new google.translate.TranslateElement({pageLanguage: '".$default_language."'".$language_choices . ($layout=='Horizontal' ? $horizontal_layout : ($layout=='SIMPLE' ? $simple_layout : '')) . $auto_display . $this->analytics()."}, 'google_language_translator');}</script>";
 		  $str.="<script type='text/javascript' src='//translate.google.com/translate_a/element.js?cb=GoogleLanguageTranslatorInit'></script>";
 	    echo $str;
 	} 
@@ -808,6 +813,7 @@ class google_language_translator {
           <select name="googlelanguagetranslator_display" id="googlelanguagetranslator_display" style="width:170px;">
              <option value="Vertical" <?php if(get_option('googlelanguagetranslator_display')=='Vertical'){echo "selected";}?>>Vertical</option>
              <option value="Horizontal" <?php if(get_option('googlelanguagetranslator_display')=='Horizontal'){echo "selected";}?>>Horizontal</option>
+			 <option value="SIMPLE" <?php if (get_option('googlelanguagetranslator_display')=='SIMPLE'){echo "selected";}?>>Popup Style</option>
           </select>  
   <?php }
   
@@ -1106,7 +1112,7 @@ class google_language_translator {
 					  </tr>
 					  
 					  <tr class="notranslate">
-                        <td>Layout option:</td>
+						<td>Layout option: <span style="color:red; font-weight:bold">NEW!</span> (Popup layout just added!)</td>
 						<td><?php $this->googlelanguagetranslator_display_cb(); ?></td>
 					  </tr>
 					  
@@ -1204,7 +1210,7 @@ class google_language_translator {
 				  </tr>
 				  
 				  <tr>
-					<td><?php if (isset ($_POST['googlelanguagetranslator_flags_order']) ) { echo $_POST['googlelanguagetranslator_flags_order']; } ?></td>
+					<td></td>
 				  </tr>
 	
 	
@@ -1256,10 +1262,10 @@ class google_language_translator {
 		  
 		<div class="metabox-holder notranslate" style="float: right; width: 33%;">
           <div class="postbox">
-            <h3>GLT Premium 5.0.16 is Here! $30</h3>
+            <h3>GLT Premium 5.0.22 is Here! $30</h3>
 			<div class="inside"><a class="wp-studio-logo" href="http://www.wp-studio.net/" target="_blank"><img style="background:#444; border-radius:3px; -webkit-border-radius:3px; -moz-border-radius:3px; width:177px;" src="<?php echo plugins_url('google-language-translator/images/logo.png'); ?>"></a><br />
               <ul id="features" style="margin-left:15px">
-                <li style="list-style:square outside"><span style="color:red; font-weight:bold">New!</span> Edit translations! (Beta)</li>
+				<li style="list-style:square outside"><span style="color:red; font-weight:bold">New!</span> Edit translations! (Pages/Posts ONLY)</li>
                 <li style="list-style:square outside">6 Floating Widget positions</li>
                 <li style="list-style:square outside">91 Languages with flags</li>
                 <li style="list-style:square outside">Exclude specific areas from translation</li>

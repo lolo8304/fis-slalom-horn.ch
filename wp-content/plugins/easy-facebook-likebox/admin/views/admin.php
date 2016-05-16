@@ -11,6 +11,8 @@
  * @link      http://example.com
  * @copyright 2014 Your Name or Company Name
  */
+//we don't have data at the moment.
+$data = '';
 ?>   
 <div class="wrap efbl" id="dashboard-widgets">
 <h2 class="nav-tab-wrapper">
@@ -30,7 +32,7 @@
    
     <div id="normal-sortables" class="meta-box-sortables ui-sortable">
     
-    	<?php do_meta_boxes($this->plugin_screen_hook_suffix, 'normal', $data); ?>
+    	<?php do_meta_boxes($this->plugin_screen_hook_suffix, 'normal', $data ); ?>
        
        
     </div>

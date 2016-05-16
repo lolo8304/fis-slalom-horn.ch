@@ -71,18 +71,32 @@ class WP_Option_Forms_01 {
 	public function call_wp_ajax() {
 		check_ajax_referer( 'wpof_update_options', 'wpof-nonce' );
 
+        if ( ! current_user_can( 'manage_options' ) ) {
+            die( '0' );
+        }
+
 		$option_name = $_POST[ 'ajax_option_name' ];
-		$value = NULL;
+		$values = NULL;
 
 		if ( isset( $_POST[ $option_name ] ) )
-			$value = $_POST[ $option_name ];
+			$values = $_POST[ $option_name ];
 
-		if ( ! is_array( $value ) )
-			$value = trim( $value );
+		if ( ! is_array( $values ) ) {
+            die( '0' );
+        }
 
-		$value = stripslashes_deep( $value );
+		$values = stripslashes_deep( $values );
 
-		update_option( $option_name, $value );
+        foreach ( $values as $key => $val ) {
+            if ( $key === 'ignore' ) {
+                // text area (don't remove line breaks)
+                $values[ $key ] = filter_var( $val, FILTER_SANITIZE_STRING );
+            } else {
+                $values[ $key ] = sanitize_text_field( $val );
+            }
+        }
+
+		update_option( $option_name, $values );
 
 		die( '1' );
 	}
@@ -141,7 +155,7 @@ class WP_Option_Forms_01 {
 		if ( $ajaxSave ) {
 			$html .= wp_nonce_field( 'wpof_update_options', 'wpof-nonce', FALSE, FALSE );
 			$html .= '<input type="hidden" name="action" value="wpof_update_options" />';
-			$html .= '<input type="hidden" name="ajax_option_name" value="'. $this->current_option .'" />';
+			$html .= '<input type="hidden" name="ajax_option_name" value="'. esc_attr( $this->current_option ) .'" />';
 
 			// instead of using settings_fields();
 			$html .= '<input type="hidden" name="option_page" value="' . esc_attr( $this->current_option ) . '" />';
@@ -220,7 +234,7 @@ class WP_Option_Forms_01 {
 		if ( ! key_exists( 'class', $attrs ) )
 			$attrs[ 'class' ] = 'large-text';
 
-		return '<textarea '. $this->attrs( $attrs, $key ) .'>'. $this->value( $key ) .'</textarea>';
+		return '<textarea '. $this->attrs( $attrs, $key ) .'>'. esc_textarea( $this->value( $key ) ) .'</textarea>';
 	}
 
 	/**
@@ -261,7 +275,7 @@ class WP_Option_Forms_01 {
 
 		foreach ( $options AS $value => $label ) {
 			$selected = ( $value == $this->value( $key ) ) ? ' selected="selected"' : '';
-			$html .= '<option value="'. $value .'"'. $selected .'>'. $label .'</option>';
+			$html .= '<option value="'. esc_attr( $value ) .'"'. $selected .'>'. $label .'</option>';
 		}
 
 		$html .= '</select>';
@@ -341,14 +355,14 @@ class WP_Option_Forms_01 {
 		if ( $key !== NULL ) {
 			$str .= 'name="' . $this->field_name( $key ) .'" ';
 			if ( ! key_exists( 'id', $attrs ) )
-				$str .= 'id="' . $key .'" ';
+				$str .= 'id="' . esc_attr( $key ) .'" ';
 		}
 
 		if ( $value !== NULL )
-			$str .= 'value="' . $value .'" ';
+			$str .= 'value="' . esc_attr( $value ) .'" ';
 
 		foreach ( $attrs AS $attr => $value )
-			$str .= $attr .'="'. $value .'" ';
+			$str .= $attr .'="'. esc_attr( $value ) .'" ';
 
 		return $str;
 	}

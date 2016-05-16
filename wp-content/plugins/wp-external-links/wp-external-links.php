@@ -4,14 +4,14 @@ Plugin Name: WP External Links
 Plugin URI: http://www.freelancephp.net/wp-external-links-plugin
 Description: Open external links in a new window/tab, add "external" / "nofollow" to rel-attribute, set icon, XHTML strict, SEO friendly...
 Author: Victor Villaverde Laan
-Version: 1.80
+Version: 1.81
 Author URI: http://www.freelancephp.net
 License: Dual licensed under the MIT and GPL licenses
 */
 
 // constants
 if (!defined('WP_EXTERNAL_LINKS_FILE')) { define('WP_EXTERNAL_LINKS_FILE', __FILE__); }
-if (!defined('WP_EXTERNAL_LINKS_VERSION')) { define('WP_EXTERNAL_LINKS_VERSION', '1.80'); }
+if (!defined('WP_EXTERNAL_LINKS_VERSION')) { define('WP_EXTERNAL_LINKS_VERSION', '1.81'); }
 if (!defined('WP_EXTERNAL_LINKS_KEY')) { define('WP_EXTERNAL_LINKS_KEY', 'wp_external_links'); }
 if (!defined('WP_EXTERNAL_LINKS_DOMAIN')) { define('WP_EXTERNAL_LINKS_DOMAIN', 'wp-external-links'); }
 if (!defined('WP_EXTERNAL_LINKS_OPTIONS_NAME')) { define('WP_EXTERNAL_LINKS_OPTIONS_NAME', 'WP_External_Links_options'); }
@@ -33,6 +33,15 @@ if (version_compare($wp_version, '3.6', '>=') && version_compare(phpversion(), '
 
 	// create instance
 	$WP_External_Links = new WP_External_Links();
+
+    // Warning for the next update to version 2.x
+    if (!function_exists('wpel_update_notice')) {
+        function wpel_update_notice()
+        {
+            echo '<p style="color:#f00; font-weight:bold;">ATTENTION: This update has some major changes. Please check the changelog first!</p>';
+        }
+        add_action('in_plugin_update_message-' . plugin_basename(__FILE__), 'wpel_update_notice');
+    }
 
     // init test
     if (class_exists('Test_WP_External_Links')) {

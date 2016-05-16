@@ -100,3 +100,13 @@ if(!function_exists('ecff_hastags_to_link')){
 		return preg_replace('/(^|\s)#(\w*[a-zA-Z_]+\w*)/', '\1#<a href="https://www.facebook.com/hashtag/\2" target="_blank">\2</a>', $text);
 	}
 }
+
+if(!function_exists('efbl_parse_url')){
+	function efbl_parse_url($url){
+		$fb_url = parse_url( $url );
+		$fanpage_url = str_replace('/', '', $fb_url['path']);
+
+		return $fanpage_url;
+
+	}
+}

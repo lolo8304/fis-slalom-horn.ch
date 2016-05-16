@@ -34,7 +34,7 @@ if (get_option('googlelanguagetranslator_flags') == 'show_flags') {
 	if ( get_option ('googlelanguagetranslator_flags_alignment') == 'flags_right') {
 	  echo '#google_language_translator, #language { clear:both; width:160px; text-align:right; }';
 	  echo '#language { float:right; }';
-	  echo '#flags { text-align:right; width:165px; float:none; clear:right; }';
+	  echo '#flags { text-align:right; width:165px; float:right; clear:right; }';
 	  echo '#flags ul { float:right !important; }';
 	  echo 'p.hello { text-align:right; float:right; clear:both; }';
       echo '.glt-clear { height:0px; clear:both; margin:0px; padding:0px; }';
@@ -45,7 +45,7 @@ if (get_option('googlelanguagetranslator_flags') == 'show_flags') {
 	  echo '#flags { width:165px; }';
 	  echo '#flags a { display:inline-block; margin-right:2px; }';
 	} elseif ( get_option ('googlelanguagetranslator_flags_alignment') == 'flags_right') {
-	  echo '#flags { width:40px; }';
+	  echo '#flags { width:165px; }';
 	  echo '#flags a { display:inline-block; margin-left:2px; }';
 	}
 }
@@ -63,7 +63,7 @@ if (get_option('googlelanguagetranslator_showbranding')=='Yes') {
       echo '#google_language_translator { width:auto !important; }';
     }
   
-} elseif(get_option('googlelanguagetranslator_showbranding')=='No') {
+} elseif(get_option('googlelanguagetranslator_showbranding')=='No' && get_option('googlelanguagetranslator_display')!='SIMPLE') {
     if(get_option('googlelanguagetranslator_active')==1) { 
       echo '#google_language_translator a {display: none !important; }';
       echo '.goog-te-gadget {color:transparent !important;}';  

@@ -42,6 +42,15 @@ class Easy_Facebook_Likebox_Admin {
 	protected $plugin_screen_hook_suffix = null;
 
 	/**
+	 * Get plugin options
+	 *
+	 * @since    1.0.0
+	 *
+	 * @var      string
+	 */
+	protected $options = null;
+
+	/**
 	 * Initialize the plugin by loading admin scripts & styles and adding a
 	 * settings page and menu.
 	 *
@@ -49,8 +58,9 @@ class Easy_Facebook_Likebox_Admin {
 	 */
 	private function __construct() {
 		
-		$plugin = Easy_Facebook_Likebox::get_instance();
-		$this->plugin_slug = $plugin->get_plugin_slug();
+		global $efbl;
+
+		$this->plugin_slug = $efbl->get_plugin_slug();
 
 		// Load admin style sheet and JavaScript.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
@@ -64,6 +74,7 @@ class Easy_Facebook_Likebox_Admin {
 		add_filter( 'plugin_action_links_' . $plugin_basename, array( $this, 'add_action_links' ) );
 		
 		add_action( 'admin_init', array( $this, 'i_have_supported_efbl') );
+		add_action( 'admin_init', array( $this, 'efbl_get_options') );
 		
 		//if ( get_option('I_HAVE_SUPPORTED_THE_EFBL_PLUGIN') != 1 )
 			add_action( 'admin_notices', array( $this, 'post_installtion_upgrade_nag') );
@@ -171,8 +182,8 @@ class Easy_Facebook_Likebox_Admin {
 		 *   For reference: http://codex.wordpress.org/Roles_and_Capabilities
 		 */
 		$this->plugin_screen_hook_suffix = add_menu_page(
-			__( 'Easy Fcebook Likebox', $this->plugin_slug ),
-			__( 'Easy Fcebook Likebox', $this->plugin_slug ),
+			__( 'Easy Facebook Likebox', $this->plugin_slug ),
+			__( 'Easy Facebook Likebox', $this->plugin_slug ),
 			'manage_options',
 			$this->plugin_slug,
 			array( $this, 'display_plugin_admin_page' ),
@@ -191,7 +202,7 @@ class Easy_Facebook_Likebox_Admin {
 		add_meta_box('easy-facebook-feed', __('Settings', 'easy-facebook-likebox'), array(&$this, 'on_efbfeed_settings'), $this->plugin_screen_hook_suffix, 'easyfbfeed', 'core');
 		
  		add_meta_box('easy-facebook-likebox_popup', __('Like box pup up settings', 'easy-facebook-likebox'), array(&$this, 'on_popup_settings'), $this->plugin_screen_hook_suffix, 'additional', 'core');
-		add_meta_box('efbl-support_us_box', __( 'Support us by liking our fan page and/or consider some dontaion!' , 'easy-facebook-likebox'), array(&$this, 'on_support_us'), $this->pagehook, 'side', 'core');
+		add_meta_box('efbl-support_us_box', __( 'Support us by liking our fan page and/or consider some dontaion!' , 'easy-facebook-likebox'), array(&$this, 'on_support_us'), $this->plugin_screen_hook_suffix, 'side', 'core');
  		
 		 
 	}
@@ -262,7 +273,10 @@ class Easy_Facebook_Likebox_Admin {
 		if ( get_site_option( $version_key ) == $plugin_verstion && get_site_option( $notice_key ) == 1 ) return;
 
 		$msg = sprintf(__('Thanks for installting/upgrading the Easy Facebook Likebox Plugin! If you like this plugin, please consider some <a href="%s" target="_blank">donation</a> and/or <a href="%s" target="_blank">rating it</a>!
-		Support us by liking our facebook fan page! 
+
+			I would really appreciate if you could spare 30 to <a href="https://apps.facebook.com/my-polls/form/what-feature-you-use-mostly-in-plugin?from=admin_wall" target="_blank">answer a simple question</a>. 
+
+		Support us by liking our facebook fan page and/or become follower at twitter! 
 		
 	  <div id="fb-root"></div>
 <script>(function(d, s, id) {
@@ -273,14 +287,21 @@ class Easy_Facebook_Likebox_Admin {
   fjs.parentNode.insertBefore(js, fjs);
 }(document, \'script\', \'facebook-jssdk\'));</script>
 
-<div class="fb-like" data-href="https://facebook.com/jwebsol" data-layout="standard" data-action="like" data-show-faces="false" data-share="true"></div>
+<div class="fb-like" data-href="https://facebook.com/jwebsol" data-layout="standard" data-action="like" data-show-faces="false" data-share="false"></div>
+
+<a href="https://twitter.com/SajidJavaid" class="twitter-follow-button" data-show-count="false">Follow @SajidJavaid</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?"http":"https";if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document, "script", "twitter-wjs");</script>
+
 			  	  <br /><br />
 		<a href="%s" class="button button-primary">I have supported already</a>				  
 		', $this->plugin_slug ),
 				'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=sjaved786%40gmail%2ecom&lc=US&item_name=Easy%20Facebook%20Like%20Box%20WordPress%20Plugin&item_number=efbl&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted',
-				'http://wordpress.org/plugins/easy-facebook-likebox/',
+				'https://wordpress.org/support/view/plugin-reviews/easy-facebook-likebox#postform',
 				get_admin_url('', '/admin.php?page=easy-facebook-likebox&efbl_supported=1')
 				);
+
+		
+
 		echo "<div class='update-nag'>$msg</div>";
 
 		update_site_option( $version_key, $plugin_verstion );
@@ -514,11 +535,9 @@ class Easy_Facebook_Likebox_Admin {
 		
 		$options = get_option( 'efbl_settings_display_options' );
 		$options = wp_parse_args($options, $this->efbl_default_options());
-		/*echo "<pre>";
-		print_r($options);
-		echo "</pre>"; */
 		
-		$html = '<textarea id="efbl_popup_shortcode" name="efbl_settings_display_options[efbl_popup_shortcode]" rows="5" cols="50" placeholder="'.$description[0].'">' . $options['efbl_popup_shortcode'] . '</textarea>';
+		
+		$html = '<textarea id="efbl_popup_shortcode" name="efbl_settings_display_options[efbl_popup_shortcode]" rows="5" cols="50" placeholder="">' . $options['efbl_popup_shortcode'] . '</textarea>';
  		 
 		$html .= '<br /> '.$args[0].'&nbsp;';
 		
@@ -529,9 +548,9 @@ class Easy_Facebook_Likebox_Admin {
 	//Enable when uers logged pupup
  	function efbl_display_on_home_only($args){
 
-		$options = get_option( 'efbl_settings_display_options' );
+		$check_value = isset( $this->options['efbl_enabe_if_home'] ) ? $this->options['efbl_enabe_if_home'] : 0 ; 
 
-		$html = '<input type="checkbox" id="efbl_enabe_home_only" name="efbl_settings_display_options[efbl_enabe_if_home]" value="1"' . checked( 1, $options['efbl_enabe_if_home'], false ) . '/>';
+		$html = '<input type="checkbox" id="efbl_enabe_home_only" name="efbl_settings_display_options[efbl_enabe_if_home]" value="1"' . checked( 1, $check_value, false ) . '/>';
 		$html .= '&nbsp;&nbsp;';
 		$html .= '<i>'.$args[0].'</i>';
 		$html .= '&nbsp;';
@@ -542,9 +561,9 @@ class Easy_Facebook_Likebox_Admin {
 	//Enable when uers logged pupup
  	function efbl_display_enable_user_loggin($args){
 
-		$options = get_option( 'efbl_settings_display_options' );
+		$check_value = isset( $this->options['efbl_enabe_if_login'] ) ? $this->options['efbl_enabe_if_login'] : 0 ; 
 
-		$html = '<input type="checkbox" id="efbl_enabe_if_login" name="efbl_settings_display_options[efbl_enabe_if_login]" value="1"' . checked( 1, $options['efbl_enabe_if_login'], false ) . '/>';
+		$html = '<input type="checkbox" id="efbl_enabe_if_login" name="efbl_settings_display_options[efbl_enabe_if_login]" value="1"' . checked( 1, $check_value , false ) . '/>';
 		$html .= '&nbsp;&nbsp;';
 		$html .= '<i>'.$args[0].'</i>';
 		$html .= '&nbsp;';
@@ -555,9 +574,9 @@ class Easy_Facebook_Likebox_Admin {
 	//Enable when uers not logged in 
  	function efbl_display_enable_user_not_loggin($args){
 
-		$options = get_option( 'efbl_settings_display_options' );
+		$check_value = isset( $this->options['efbl_enabe_if_not_login'] ) ? $this->options['efbl_enabe_if_not_login'] : 0 ; 
 
-		$html = '<input type="checkbox" id="efbl_enabe_if_not_login" name="efbl_settings_display_options[efbl_enabe_if_not_login]" value="1"' . checked( 1, $options['efbl_enabe_if_not_login'], false ) . '/>';
+		$html = '<input type="checkbox" id="efbl_enabe_if_not_login" name="efbl_settings_display_options[efbl_enabe_if_not_login]" value="1"' . checked( 1, $check_value, false ) . '/>';
 		
 		$html .= '&nbsp;&nbsp;';
 		
@@ -572,9 +591,9 @@ class Easy_Facebook_Likebox_Admin {
 	//Enable when uers not logged in 
  	function efbl_do_not_show_again($args){
 
-		$options = get_option( 'efbl_settings_display_options' );
+		$check_value = isset( $this->options['efbl_do_not_show_again'] ) ? $this->options['efbl_do_not_show_again'] : 0 ; 
 
-		$html = '<input type="checkbox" id="efbl_do_not_show_again" name="efbl_settings_display_options[efbl_do_not_show_again]" value="1"' . checked( 1, $options['efbl_do_not_show_again'], false ) . '/>';
+		$html = '<input type="checkbox" id="efbl_do_not_show_again" name="efbl_settings_display_options[efbl_do_not_show_again]" value="1"' . checked( 1, $check_value, false ) . '/>';
 		
 		$html .= '&nbsp;&nbsp;';
 		$html .= '<i>'.$args[0].'</i>';
@@ -586,9 +605,9 @@ class Easy_Facebook_Likebox_Admin {
 	//Hide on mobile
  	function efbl_do_not_show_on_mobile($args){
 
-		$options = get_option( 'efbl_settings_display_options' );
+ 		$check_value = isset( $this->options['efbl_do_not_show_on_mobile'] ) ? $this->options['efbl_do_not_show_on_mobile'] : 0 ; 
 
-		$html = '<input type="checkbox" id="efbl_do_not_show_again" name="efbl_settings_display_options[efbl_do_not_show_on_mobile]" value="1"' . checked( 1, $options['efbl_do_not_show_on_mobile'], false ) . '/>';
+		$html = '<input type="checkbox" id="efbl_do_not_show_again" name="efbl_settings_display_options[efbl_do_not_show_on_mobile]" value="1"' . checked( 1, $check_value , false ) . '/>';
 		
 		$html .= '&nbsp;&nbsp;';
 		
@@ -597,6 +616,14 @@ class Easy_Facebook_Likebox_Admin {
 		$html .= '&nbsp;';
 		
 		echo $html;
+		
+	}
+
+	//Hide on mobile
+ 	function efbl_get_options(){
+
+		$this->options = get_option( 'efbl_settings_display_options' );
+	
 		
 	}
 }

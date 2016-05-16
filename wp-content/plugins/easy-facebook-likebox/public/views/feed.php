@@ -15,8 +15,12 @@ extract($instance);
 error_reporting(0); 
 //Switch to test mode to disable cache 
 $test_mode = false; 
+if(empty($fanpage_url)){
+	$page_id = 'jwebsol';
+}else {
+	$page_id = efbl_parse_url(  $fanpage_url );
+}
 
-$page_id = ($fanpage_url) ? $fanpage_url : 'jwebsol';
 $access_token = ($access_token) ? $access_token : '395202813876688|73e8ede72008b231a0322e40f0072fe6';
 //$access_token = ($access_token) ? $access_token : '1489500477999288|KFys5ppNi3sreihdreqPkU2ChIE';
 
@@ -25,14 +29,16 @@ $number_of_posts = ($post_number) ? $post_number : '10';
 if($layout == 'half'){ $layout = 'halfwidth'; }elseif($layout == 'full'){$layout = 'fullwidth';}else{$layout = 'thumbnail';}
 $image_size = ($image_size) ? $image_size : 'normal';
 
-if( !empty($show_logo) ) $show_logo = $show_logo; else $show_logo = 1;
-if( !empty($show_image) ) $show_image = $show_image; else $show_image = 1;
+if( empty($show_logo) || $show_logo == 0 ) $show_logo = 0; else $show_logo = 1;
+if( empty($show_image) || $show_image == 0 ) $show_image = 0; else $show_image = 1;
 
 //Calculate the cache time in seconds
-if($cache_unit == 'minutes') $cache_unit = 60;
-if($cache_unit == 'hours') $cache_unit = 60*60;
-if($cache_unit == 'days') $cache_unit = 60*60*24;
+if($cache_duration == 'minutes') $cache_duration = 60;
+if($cache_duration == 'hours') $cache_duration = 60*60;
+if($cache_duration == 'days') $cache_duration = 60*60*24;
+//echo $cache_duration.'<br>';
 $cache_seconds = $cache_duration * $cache_unit;
+//echo $cache_seconds;exit;
 
 //setting query for "Show Posts By"
 $query = 'posts';
@@ -94,6 +100,7 @@ if( !empty($fbData->data) ) {
 			$PostID = explode("_", $story->id);
 			$page_id = $PostID[0];
 			$story_id = $PostID[1];
+			if( $others_only and isset($story->from->id) && $page_id == $story->from->id) continue;
 			
 			//Check the post type*/
 			
